@@ -731,10 +731,7 @@
           'gallery-container-full-width': settingsButtons['hideSidebar'].toggled,
           'gallery-dark-scroll': settingsButtons['darkMode'].toggled
         }"
-      [bufferAmount]="0"
-      [childHeight]="imgHeight + textPaddingHeight + 20
-                      + ( appState.currentView === 'thumbs' ? 4 : 0)
-                      - ( appState.currentView === 'files' ? ( imgHeight + 10 ) : 0)"
+      [enableUnequalChildrenSizes]="true"
       [items]="finalArray
                 | magicSearchPipe: magicSearchString
                 | fileSearchPipe: filters[0].array : filters[0].bool : true  : 0 : false

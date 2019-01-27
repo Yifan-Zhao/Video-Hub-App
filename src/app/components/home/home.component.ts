@@ -1082,6 +1082,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.textPaddingHeight = 20;
       }
     }
+    this.virtualScroller.invalidateAllCachedMeasurements();
     // console.log('textPaddingHeight = ' + this.textPaddingHeight);
   }
 
