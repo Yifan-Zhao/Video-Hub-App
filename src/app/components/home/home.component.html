@@ -730,183 +730,46 @@
 
     <!-- THE GALLERY PANE -->
 
-    <virtual-scroller
-      #scroll
-      id="scrollDiv"
-      class="gallery-container"
-      [ngStyle]="{
-          'height': 'calc(100vh - ' + ((settingsButtons['hideTop'].toggled ? 53 : 98)
-                      + (appState.menuHidden ? -32 : 0)) + 'px)',
-          'background': settingsButtons['darkMode'].toggled ? '#000000' : '#999999'
-        }"
-      [ngClass]="{
-          'gallery-container-full-width': settingsButtons['hideSidebar'].toggled,
-          'gallery-dark-scroll': settingsButtons['darkMode'].toggled
-        }"
-      [bufferAmount]="0"
-      [childHeight]="imgHeight + textPaddingHeight + 20
-                      + ( appState.currentView === 'thumbs' ? 4 : 0)
-                      - ( appState.currentView === 'files' ? ( imgHeight + 10 ) : 0)"
-      [items]="finalArray
-                | magicSearchPipe: magicSearchString
-                | fileSearchPipe: filters[0].array : filters[0].bool : true  : 0 : false
-                | fileSearchPipe: filters[1].array : filters[1].bool : false : 0 : false
-                | fileSearchPipe: filters[2].array : filters[2].bool : true  : 1  : false
-                | fileSearchPipe: filters[3].array : filters[3].bool : false : 1  : false
-                | fileSearchPipe: filters[4].array : filters[4].bool : true  : 1  : true
-                | fileSearchPipe: filters[5].array : filters[5].bool : true  : 2  : false : settingsButtons['manualTags'].toggled : settingsButtons['autoFileTags'].toggled : settingsButtons['autoFolderTags'].toggled
-                | fileSearchPipe: filters[6].array : filters[6].bool : false : 2  : false : settingsButtons['manualTags'].toggled : settingsButtons['autoFileTags'].toggled : settingsButtons['autoFolderTags'].toggled
-                | fileSearchPipe: filters[7].array : filters[7].bool : true  : 2  : true : settingsButtons['manualTags'].toggled : settingsButtons['autoFileTags'].toggled : settingsButtons['autoFolderTags'].toggled
-                | lengthFilterPipe: settingsButtons['resolutionFilter'].toggled : lengthLeftBound : lengthRightBound
-                | resolutionFilterPipe: settingsButtons['resolutionFilter'].toggled : freqLeftBound : freqRightBound
-                | starFilterPipe: settingsButtons['starFilter'].toggled : starLeftBound : starRightBound : forceStarFilterUpdate
-                | similarityPipe: showSimilar : findMostSimilar
-                | wordFrequencyPipe: settingsButtons['showFreq'].toggled : (settingsButtons['extendedWordCloud'].toggled ? 100 : 9) : settingsButtons['manualTags'].toggled : settingsButtons['autoFileTags'].toggled : settingsButtons['autoFolderTags'].toggled
-                | countPipe
-                | sortingPipe: sortType : shuffleTheViewNow
-                | folderViewPipe: settingsButtons['showFoldersOnly'].toggled
-                                  || (appState.currentView === 'files' && settingsButtons['showFolderInFileView'].toggled)
-                                  : settingsButtons['showFoldersOnly'].toggled"
-    >
+    <cdk-virtual-scroll-viewport class="list-container list-group" [itemSize]="100"
+    class="gallery-container"
+    [ngStyle]="{
+        'height': 'calc(100vh - ' + ((settingsButtons['hideTop'].toggled ? 53 : 98)
+                    + (appState.menuHidden ? -32 : 0)) + 'px)',
+        'background': settingsButtons['darkMode'].toggled ? '#000000' : '#999999'
+      }"
+    [ngClass]="{
+        'gallery-container-full-width': settingsButtons['hideSidebar'].toggled,
+        'gallery-dark-scroll': settingsButtons['darkMode'].toggled
+      }"
+    autosize>
+        <div *cdkVirtualFor="let item of finalArray; let i = index"
+             class="list-group-item"
+             style="display: inline-block"
+             [style.height.px]="item.itemSize">
 
-    <!-- 24 above is 20 pixels for element and 4 for the fudge factor -->
+             <app-gallery-item
+              (click)="handleClick($event, item)"
+              (contextmenu)="rightMouseClicked($event, item)"
 
-    <!-- [childWidth]="200" obove not needed
-            it can only take a number, but if nothing is entered
-            it uses the width of the first child element
-            so I can set 100vw for filmstrip -->
+              [elHeight]="imgHeight + textPaddingHeight"
+              [elWidth]="previewWidth"
+              [folderPath]="appState.selectedOutputFolder"
+              [hubName]="appState.hubName"
+              [imgHeight]="imgHeight"
 
-      <ng-container *ngIf="appState.currentView === 'thumbs'">
-        <app-gallery-item
-          *ngFor="let item of scroll.viewPortItems"
-          (click)="handleClick($event, item)"
-          (contextmenu)="rightMouseClicked($event, item)"
+              [video]="item"
 
-          [elHeight]="imgHeight + textPaddingHeight"
-          [elWidth]="previewWidth"
-          [folderPath]="appState.selectedOutputFolder"
-          [hubName]="appState.hubName"
-          [imgHeight]="imgHeight"
+              [darkMode]="settingsButtons['darkMode'].toggled"
+              [hoverScrub]="settingsButtons['hoverScrub'].toggled"
+              [largerFont]="settingsButtons['fontSizeLarger'].toggled"
+              [randomImage]="settingsButtons['randomImage'].toggled"
+              [returnToFirstScreenshot]="settingsButtons['returnToFirstScreenshot'].toggled"
+              [showMeta]="settingsButtons['showMoreInfo'].toggled"
+           ></app-gallery-item>
 
-          [video]="item"
 
-          [darkMode]="settingsButtons['darkMode'].toggled"
-          [hoverScrub]="settingsButtons['hoverScrub'].toggled"
-          [largerFont]="settingsButtons['fontSizeLarger'].toggled"
-          [randomImage]="settingsButtons['randomImage'].toggled"
-          [returnToFirstScreenshot]="settingsButtons['returnToFirstScreenshot'].toggled"
-          [showMeta]="settingsButtons['showMoreInfo'].toggled"
-        ></app-gallery-item>
-      </ng-container>
-
-      <ng-container *ngIf="appState.currentView === 'filmstrip'">
-        <app-filmstrip-item
-          *ngFor="let item of scroll.viewPortItems"
-          (click)="handleClick($event, item)"
-          (contextmenu)="rightMouseClicked($event, item)"
-
-          [video]="item"
-
-          [elHeight]="imgHeight + textPaddingHeight"
-          [folderPath]="appState.selectedOutputFolder"
-          [hubName]="appState.hubName"
-          [imgHeight]="imgHeight"
-
-          [darkMode]="settingsButtons['darkMode'].toggled"
-          [hoverScrub]="settingsButtons['hoverScrub'].toggled"
-          [largerFont]="settingsButtons['fontSizeLarger'].toggled"
-          [showMeta]="settingsButtons['showMoreInfo'].toggled"
-        ></app-filmstrip-item>
-      </ng-container>
-
-      <ng-container *ngIf="appState.currentView === 'fullView'">
-        <app-full-item
-          *ngFor="let item of scroll.viewPortItems"
-          (click)="handleClick($event, item)"
-          (contextmenu)="rightMouseClicked($event, item)"
-
-          [video]="item"
-
-          [elHeight]="imgHeight + textPaddingHeight"
-          [folderPath]="appState.selectedOutputFolder"
-          [galleryWidth]="galleryWidth"
-          [hubName]="appState.hubName"
-          [imgHeight]="imgHeight"
-
-          [darkMode]="settingsButtons['darkMode'].toggled"
-          [largerFont]="settingsButtons['fontSizeLarger'].toggled"
-          [showMeta]="settingsButtons['showMoreInfo'].toggled"
-        ></app-full-item>
-      </ng-container>
-
-      <ng-container *ngIf="appState.currentView === 'files'">
-        <app-file-item
-          *ngFor="let item of scroll.viewPortItems"
-          (contextmenu)="(item.cleanName === '***') ? doNothing() : rightMouseClicked($event, item)"
-          (click)="(item.cleanName === '***') ? handleFolderWordClicked(item.partialPath) : openVideo(item.index)"
-
-          [video]="item"
-
-          [largerFont]="settingsButtons['fontSizeLarger'].toggled"
-          [showMeta]="settingsButtons['showMoreInfo'].toggled"
-          [darkMode]="settingsButtons['darkMode'].toggled"
-        ></app-file-item>
-      </ng-container>
-
-      <ng-container *ngIf="appState.currentView === 'clips'">
-        <app-clip-item
-          *ngFor="let item of scroll.viewPortItems"
-
-          (click)="handleClick($event, item)"
-          (contextmenu)="rightMouseClicked($event, item)"
-
-          [video]="item"
-
-          [elHeight]="imgHeight + textPaddingHeight"
-          [elWidth]="previewWidth"
-          [folderPath]="appState.selectedOutputFolder"
-          [hubName]="appState.hubName"
-          [imgHeight]="imgHeight"
-
-          [autoplay]="settingsButtons['autoplayClips'].toggled"
-          [darkMode]="settingsButtons['darkMode'].toggled"
-          [largerFont]="settingsButtons['fontSizeLarger'].toggled"
-          [showMeta]="settingsButtons['showMoreInfo'].toggled"
-        ></app-clip-item>
-      </ng-container>
-
-      <ng-container *ngIf="appState.currentView === 'details'">
-        <app-details-item
-          *ngFor="let item of scroll.viewPortItems"
-          (contextmenu)="rightMouseClicked($event, item)"
-          (openFileRequest)="openVideo($event)"
-          (editFinalArrayTag)="editFinalArrayTag($event)"
-          (editFinalArrayStars)="editFinalArrayStars($event)"
-          (filterTag)="handleFileWordClicked($event.tag.name, $event.event)"
-
-          [video]="item"
-
-          [elHeight]="imgHeight + textPaddingHeight"
-          [elWidth]="previewWidth"
-          [folderPath]="appState.selectedOutputFolder"
-          [hubName]="appState.hubName"
-          [imgHeight]="imgHeight"
-
-          [star]="item.stars"
-
-          [darkMode]="settingsButtons['darkMode'].toggled"
-          [hoverScrub]="settingsButtons['hoverScrub'].toggled"
-          [largerFont]="settingsButtons['fontSizeLarger'].toggled"
-          [randomImage]="settingsButtons['randomImage'].toggled"
-          [returnToFirstScreenshot]="settingsButtons['returnToFirstScreenshot'].toggled"
-          [showMeta]="settingsButtons['showMoreInfo'].toggled"
-          [showManualTags]="settingsButtons['manualTags'].toggled"
-          [showAutoFileTags]="settingsButtons['autoFileTags'].toggled"
-          [showAutoFolderTags]="settingsButtons['autoFolderTags'].toggled"
-        ></app-details-item>
-      </ng-container>
-
-    </virtual-scroller>
+         </div>
+     </cdk-virtual-scroll-viewport>
 
   </div> <!-- end of window-content -->
 

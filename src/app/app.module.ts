@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -106,6 +107,7 @@ import { WrapperPipe } from './components/pipes/wrapper.pipe';
     BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
+    ScrollingModule,
     TranslateModule.forRoot(),
     VirtualScrollerModule,
   ],

@@ -27,6 +27,7 @@ export interface ImageElement {
   stars: StarRating;             // star rating 0 = n/a, otherwise 1, 2, 3
   width: number;                 // width of the video
   // OPTIONAL
+  itemSize?: number; // TEMP
   tags?: string[];               // tags associated with this particular file
   // Stripped out and not saved in the VHA file
   durationDisplay: string;       // displayed duration in X:XX:XX format

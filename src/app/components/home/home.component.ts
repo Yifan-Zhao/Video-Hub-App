@@ -483,6 +483,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
       this.finalArray.forEach((element: ImageElement): void => {
         this.longest = Math.max(element.duration, this.longest);
+        element.itemSize = 300;
       });
       // round to nearest 60 seconds
       this.longest = Math.ceil(this.longest / 60) * 60;
